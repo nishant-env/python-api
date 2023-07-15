@@ -1,0 +1,26 @@
+crud in api is an acronym given to 4 important operations:
+a) Create
+http_method: Post
+path_convention: /posts (plural)
+fast_api_decorator_implementation: @app.post("/posts")
+
+b) Read
+http_method: Get
+path_convention: /posts (plural) or /posts/:id
+fast_api_decorator_implementation: @app.post("/posts") or @app.post("/posts/{id}")
+
+c) Update
+The main difference between put and patch is:
+put: All the fields needs to be passed even if a single field is required to be changed
+patch: Only the required field can be passed
+
+http_method: Put/ Patch
+path_convention: /posts/:id
+fast_api_decorator_implementation: @app.put("/posts/{id}") or @app.patch("/posts/{id}")
+
+
+d) Delete
+http_method: Delete
+path_convention: /posts/:id
+fast_api_decorator_implementation: @app.delete("/posts/{id}")
+
