@@ -9,8 +9,6 @@ while True:
     try:
         conn = psycopg2.connect(database='fastapi', host='localhost', port='9876', user='postgres', password='Root@123')
         cur = conn.cursor()
-        res = cur.execute('select * from posts')
-        print(res)
         break
     except Exception as e:
         print(e)
@@ -33,17 +31,23 @@ def home():
 
 @app.get('/posts')
 def all_posts():
-    return database
+    try:
+        cur.execute('select * from posts')
+        res = cur.fetchall()
+    except:
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return res    
 
 @app.get('/posts/{id}')
 def single_post(id: int):
     try:
-        value_to_return = database[id-1]
+        cur.execute(f'select * from posts where id = {id}')
+        res= cur.fetchall()
     except:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id {id} was not found")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
         # response.status_code=status.HTTP_404_NOT_FOUND
         # return {"message": f"post with id {id} was not found"}
-    return value_to_return
+    return res
 
 
 
