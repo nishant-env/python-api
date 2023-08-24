@@ -4,6 +4,7 @@ from fastapi.params import Optional, Body
 from random import randint
 import psycopg2
 import time
+import pandas as pd
 
 while True:
     try:
@@ -16,7 +17,7 @@ while True:
 
 
 app = FastAPI()
-database = [{"id": 1, "title" : "Post 1", "content": "Content 1"}, {"id": 2, "title" : "Post 2", "content": "Content 2"}]
+
 
 class PostModel(BaseModel):
     title: str
@@ -41,7 +42,7 @@ def all_posts():
 @app.get('/posts/{id}')
 def single_post(id: int):
     try:
-        cur.execute(f'select * from posts where id = {id}')
+        cur.execute('select * from posts where id = %s' , str(id) )
         res= cur.fetchall()
     except:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -53,35 +54,34 @@ def single_post(id: int):
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def new_post(post_inp: PostModel):
-    post_dict = post_inp.dict()
-    id = randint(3,100000)
-    post_dict["id"] = id
-    database.append(post_dict)
-    print(post_dict)
-    return post_dict
+    try:
+        post_dict = post_inp.dict()
+        cur.execute("""insert into posts(title,content,published) values (%s,%s,%s) returning *""", (post_dict["title"], post_dict["content"], post_dict["published"])) 
+        post_ret = cur.fetchone()
+        conn.commit()
+    except Exception as e:
+        print(e)
+        # raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)    
+    return post_ret
 
-
-def get_index(id):
-    for dict_id, data in enumerate(database):
-        if data["id"] == id:
-            return dict_id
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int):
     try:
-        dict_index = get_index(id)
-        database.pop(dict_index)
+        deletion_sql = f"delete from posts where id = {id}"
+        cur.execute(deletion_sql)
+        conn.commit()
     except TypeError:
          raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Data with id {id} was not found")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 
-@app.put("/posts/{id}")
-def update_post(id: int, update_post: PostModel):
-    try:
-        dict_index = get_index(id)
-        database[dict_index] = update_post.dict()
-    except:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Data with id {id} was not found")
-    return database[dict_index]
+# @app.put("/posts/{id}")
+# def update_post(id: int, update_post: PostModel):
+#     try:
+#         dict_index = get_index(id)
+#         database[dict_index] = update_post.dict()
+#     except:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Data with id {id} was not found")
+#     return database[dict_index]
