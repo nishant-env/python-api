@@ -19,7 +19,7 @@ def home():
 
 @app.get('/posts')
 def all_posts():
-    return database
+    return {"data" : database}
 
 @app.get('/posts/{id}')
 def single_post(id: int):
@@ -30,7 +30,6 @@ def single_post(id: int):
         # response.status_code=status.HTTP_404_NOT_FOUND
         # return {"message": f"post with id {id} was not found"}
     return value_to_return
-
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
