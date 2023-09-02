@@ -5,14 +5,14 @@ from models import UserCreate, UserReturn
 from sqlamch_model import Users
 import bcrypt
 
-router = APIRouter()
+router = APIRouter(prefix='/users')
 
 def database_session():
     with SessionContextManger() as db:
         yield db
 
 
-@router.post('/users', response_model=UserReturn, status_code=201)
+@router.post('/', response_model=UserReturn, status_code=201)
 def insertpost(users: UserCreate, session: Session = Depends(database_session)):
     user_add = Users(**users.dict())
     salt = bcrypt.gensalt()
@@ -23,7 +23,7 @@ def insertpost(users: UserCreate, session: Session = Depends(database_session)):
     return user_add
 
 
-@router.get('/users/{id}', response_model=UserReturn)
+@router.get('/{id}', response_model=UserReturn)
 def getUser(id: int,session: Session = Depends(database_session)):
     user_ret = session.query(Users).filter(Users.id == id).first()
     if user_ret == None:

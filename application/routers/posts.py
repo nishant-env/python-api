@@ -7,7 +7,7 @@ from fastapi import Depends, HTTPException, status, APIRouter
 from sqlalch_db import SessionContextManger
 
 
-router = APIRouter()
+router = APIRouter(prefix='/posts')
 
 def database_session():
     with SessionContextManger() as db:
@@ -16,7 +16,7 @@ def database_session():
 
 
 
-@router.get("/posts", response_model=List[PostReturn])
+@router.get("/", response_model=List[PostReturn])
 def getallposts(session1: Session = Depends(database_session)):
     post = session1.query(Posts).all()
     if len(post) == 0:
@@ -24,7 +24,7 @@ def getallposts(session1: Session = Depends(database_session)):
     return post
 
 
-@router.get("/posts/{id}", response_model=PostReturn)
+@router.get("/{id}", response_model=PostReturn)
 def getpostfiltered(id: int, session1: Session = Depends(database_session)):
     post = session1.query(Posts).filter(Posts.id == id).first()
     if post == None:
@@ -34,7 +34,7 @@ def getpostfiltered(id: int, session1: Session = Depends(database_session)):
 
 
 
-@router.post("/posts", status_code=201, response_model=PostReturn)
+@router.post("/", status_code=201, response_model=PostReturn)
 def insertpost(post: PostCreate, session: Session = Depends(database_session)):
     post_insert = Posts(**post.dict())
     session.add(post_insert)
@@ -45,7 +45,7 @@ def insertpost(post: PostCreate, session: Session = Depends(database_session)):
     return post_insert
 
 
-@router.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, session1: Session = Depends(database_session)):
     post = session1.query(Posts).filter(Posts.id == id)
     if post.first() == None:
@@ -57,7 +57,7 @@ def delete_post(id: int, session1: Session = Depends(database_session)):
 
 
 
-@router.put("/posts/{id}", status_code=status.HTTP_201_CREATED, response_model=PostReturn)
+@router.put("/{id}", status_code=status.HTTP_201_CREATED, response_model=PostReturn)
 def update_post(post_updated: PostCreate, id: int, session1: Session = Depends(database_session)):
     post = session1.query(Posts).filter(Posts.id == id)
     if post.first() == None:
