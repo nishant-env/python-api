@@ -7,6 +7,6 @@ hashed1 = b'$2b$12$w/pim2s9zNPhznjoC2meWOBU4dW369IQ79xkLSUnYNBWnT2nf6BRW'
 bytes = pas.encode('utf-8')
 salt = bcrypt.gensalt()
 
-# hash = bcrypt.hashpw(bytes, salt)
-# print(hash)
-print(bcrypt.checkpw(bytes, hashed1))
+hash = bcrypt.hashpw(bytes, salt)
+print(hash)
+# print(bcrypt.checkpw(bytes, hashed1))

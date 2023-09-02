@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalch_db import SessionContextManger, engine1
 from sqlamch_model import Base
-from routers import posts, users
+from routers import posts, users, auth
 
 app = FastAPI()
 
@@ -11,3 +11,4 @@ def homepage():
 
 app.include_router(posts.router)
 app.include_router(users.router)
+app.include_router(auth.router)

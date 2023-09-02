@@ -21,7 +21,6 @@ class PostReturn(PostModel):
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
-    created_at: datetime
 
 
 class UserReturn(BaseModel):
@@ -32,3 +31,7 @@ class UserReturn(BaseModel):
     class Config:
         orm_mode=True
     
+
+class loginUser(BaseModel):
+    email: EmailStr
+    password: str

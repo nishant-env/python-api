@@ -7,7 +7,7 @@ from fastapi import Depends, HTTPException, status, APIRouter
 from sqlalch_db import SessionContextManger
 
 
-router = APIRouter(prefix='/posts')
+router = APIRouter(prefix='/posts', tags=["posts"])
 
 def database_session():
     with SessionContextManger() as db:

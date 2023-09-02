@@ -3,9 +3,10 @@ from sqlalchemy.orm import Session
 from sqlalch_db import SessionContextManger
 from models import UserCreate, UserReturn
 from sqlamch_model import Users
+from utils import create_hash
 import bcrypt
 
-router = APIRouter(prefix='/users')
+router = APIRouter(prefix='/users', tags=["users"])
 
 def database_session():
     with SessionContextManger() as db:
@@ -15,8 +16,8 @@ def database_session():
 @router.post('/', response_model=UserReturn, status_code=201)
 def insertpost(users: UserCreate, session: Session = Depends(database_session)):
     user_add = Users(**users.dict())
-    salt = bcrypt.gensalt()
-    user_add.password=bcrypt.hashpw(user_add.password.encode('utf-8'), salt)
+    user_add.password=create_hash(user_add.password)
+    print(user_add.password)
     session.add(user_add)
     session.commit()
     session.refresh(user_add)
