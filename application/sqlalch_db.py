@@ -1,7 +1,9 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from urllib.parse import quote_plus
-engine1 = create_engine('postgresql+psycopg2://postgres:%s@localhost:9876/fastapi' % quote_plus('Root@123'), echo=True)
+from config import settings
+
+engine1 = create_engine(f'postgresql+psycopg2://{settings.database_user}:%s@{settings.database_host}:{settings.database_port}/{settings.database_name}' % quote_plus(settings.database_password), echo=True)
 
 class SessionContextManger:
     def __init__(self):

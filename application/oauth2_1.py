@@ -3,12 +3,12 @@ from datetime import datetime, timedelta
 from models import TokenData
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException, status
+from config import settings
 
 
-
-SECRET_KEY = '5905c36e7ea5f8437b333e8a87940c24c440d76af40826e8493489cabc7dd393'
-ALGO= 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = settings.secret_key
+ALGO= settings.algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 oauth_schema = OAuth2PasswordBearer('login')
 
 def get_jwt_token(data: dict):
