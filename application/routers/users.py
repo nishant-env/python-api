@@ -5,6 +5,7 @@ from models import UserCreate, UserReturn
 from sqlamch_model import Users
 from utils import create_hash
 import bcrypt
+from psycopg2 import Binary
 
 router = APIRouter(prefix='/users', tags=["users"])
 
@@ -16,8 +17,7 @@ def database_session():
 @router.post('/', response_model=UserReturn, status_code=201)
 def insertpost(users: UserCreate, session: Session = Depends(database_session)):
     user_add = Users(**users.dict())
-    user_add.password=create_hash(user_add.password)
-    print(user_add.password)
+    user_add.password=create_hash(user_add.password).decode('utf-8')
     session.add(user_add)
     session.commit()
     session.refresh(user_add)

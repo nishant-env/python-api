@@ -1,6 +1,6 @@
 from sqlalch_db import SessionContextManger
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import Integer, String, Boolean, Column
+from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Integer, String, Boolean, Column, ForeignKey
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalch_db import engine1
 
@@ -15,6 +15,8 @@ class Posts(Base):
     title = Column(String(255), nullable=False)
     content = Column(String(255), nullable=False)
     published = Column(Boolean, server_default='TRUE', nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    owner = relationship("Users")
     
 
 
